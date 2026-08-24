@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>DocuMind AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <span>✦</span>
+            DocuMind AI
+        </div>
+
+        <p class="description">
+            Ask questions about your documents using AI-powered
+            semantic search.
+        </p>
+
+        <button
+            class="new-document"
+            onclick="resetDocument()">
+
+            + New Document
+
+        </button>
+
+        <div class="sidebar-info">
+
+            <div>
+                <span>🧠</span>
+                Semantic Search
+            </div>
+
+            <div>
+                <span>📚</span>
+                RAG-powered Answers
+            </div>
+
+            <div>
+                <span>🔎</span>
+                Source Citations
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- Main -->
+
+    <main class="main">
+
+        <header class="header">
+
+            <div>
+
+                <h1>Document Q&A</h1>
+
+                <p>
+                    Upload a PDF and ask anything about it.
+                </p>
+
+            </div>
+
+            <div
+                id="documentName"
+                class="document-name">
+
+                No document
+
+            </div>
+
+        </header>
+
+
+        <!-- Upload -->
+
+        <section class="upload-card">
+
+            <div class="upload-icon">
+                📄
+            </div>
+
+            <div class="upload-content">
+
+                <h2>
+                    Upload your document
+                </h2>
+
+                <p>
+                    Select a PDF to start asking questions.
+                </p>
+
+                <input
+                    type="file"
+                    id="pdfFile"
+                    accept=".pdf">
+
+                <label
+                    for="pdfFile"
+                    class="choose-file">
+
+                    Choose PDF
+
+                </label>
+
+                <button
+                    id="uploadButton"
+                    onclick="uploadPDF()">
+
+                    Upload & Process
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <p
+            id="uploadStatus"
+            class="upload-status">
+        </p>
+
+
+        <!-- Chat -->
+
+        <section
+            id="chat"
+            class="chat">
+
+            <div class="welcome">
+
+                <div class="welcome-icon">
+                    ✨
+                </div>
+
+                <h2>
+                    Ask your document
+                </h2>
+
+                <p>
+                    Upload a PDF and I'll find the relevant
+                    information for you.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Question -->
+
+        <div class="question-area">
+
+            <input
+                type="text"
+                id="question"
+                placeholder="Ask something about your document..."
+                onkeydown="handleEnter(event)">
+
+            <button
+                onclick="askQuestion()"
+                id="askButton">
+
+                Ask
+
+            </button>
+
+        </div>
+
+        <p class="footer-text">
+            AI answers are generated only from retrieved document content.
+        </p>
+
+    </main>
+
+</div>
+
+
+<script>
+
+let currentDocument = null;
+
+
+function handleEnter(event) {
+
+    if (event.key === "Enter") {
+
+        askQuestion();
+
+    }
+
+}
+
+
+async function uploadPDF() {
+
+    const fileInput =
+        document.getElementById("pdfFile");
+
+    const status =
+        document.getElementById("uploadStatus");
+
+    const button =
+        document.getElementById("uploadButton");
+
+    const documentName =
+        document.getElementById("documentName");
+
+
+    if (!fileInput.files.length) {
+
+        status.textContent =
+            "Please select a PDF first.";
+
+        return;
+
+    }
+
+
+    const file =
+        fileInput.files[0];
+
+
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+
+        status.textContent =
+            "Only PDF files are supported.";
+
+        return;
+
+    }
+
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Processing...";
+
+    status.textContent =
+        "Reading document and creating embeddings...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.success) {
+
+            currentDocument =
+                file.name;
+
+            documentName.textContent =
+                file.name;
+
+            status.textContent =
+                `✓ ${file.name} processed successfully. ${data.chunks} chunks created.`;
+
+
+            document.getElementById("chat").innerHTML = `
+
+                <div class="welcome">
+
+                    <div class="welcome-icon">
+                        ✓
+                    </div>
+
+                    <h2>
+                        Document ready
+                    </h2>
+
+                    <p>
+                        Ask a question about ${file.name}
+                    </p>
+
+                </div>
+
+            `;
+
+        } else {
+
+            status.textContent =
+                data.message;
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+            "Upload failed. Please try again.";
+
+    }
+
+
+    button.disabled = false;
+
+    button.textContent =
+        "Upload & Process";
+
+}
+
+
+async function askQuestion() {
+
+    const input =
+        document.getElementById("question");
+
+    const question =
+        input.value.trim();
+
+    const chat =
+        document.getElementById("chat");
+
+    const button =
+        document.getElementById("askButton");
+
+
+    if (!question) {
+
+        return;
+
+    }
+
+
+    // User message
+
+    chat.innerHTML += `
+
+        <div class="message user-message">
+
+            <div class="avatar">
+                You
+            </div>
+
+            <div class="message-content">
+                ${escapeHTML(question)}
+            </div>
+
+        </div>
+
+    `;
+
+
+    input.value = "";
+
+    button.disabled = true;
+
+
+    // Thinking message
+
+    const thinkingId =
+        "thinking-" + Date.now();
+
+
+    chat.innerHTML += `
+
+        <div
+            class="message ai-message"
+            id="${thinkingId}">
+
+            <div class="avatar ai">
+                AI
+            </div>
+
+            <div class="message-content">
+
+                <span class="thinking">
+                    Thinking...
+                </span>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/ask",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        question: question
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        const thinking =
+            document.getElementById(
+                thinkingId
+            );
+
+
+        let sourcesHTML = "";
+
+
+        if (data.sources &&
+            data.sources.length > 0) {
+
+            sourcesHTML = `
+
+                <div class="sources">
+
+                    <strong>
+                        Sources
+                    </strong>
+
+                    ${data.sources
+                        .map(
+                            page =>
+                            `<span>Page ${page}</span>`
+                        )
+                        .join("")}
+
+                </div>
+
+            `;
+
+        }
+
+
+        thinking.innerHTML = `
+
+            <div class="avatar ai">
+                AI
+            </div>
+
+            <div class="message-content">
+
+                <div class="answer">
+                    ${escapeHTML(data.answer)}
+                </div>
+
+                ${sourcesHTML}
+
+            </div>
+
+        `;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        const thinking =
+            document.getElementById(
+                thinkingId
+            );
+
+
+        thinking.innerHTML = `
+
+            <div class="avatar ai">
+                AI
+            </div>
+
+            <div class="message-content">
+
+                Something went wrong.
+                Please try again.
+
+            </div>
+
+        `;
+
+    }
+
+
+    button.disabled = false;
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+function resetDocument() {
+
+    currentDocument = null;
+
+
+    document.getElementById(
+        "documentName"
+    ).textContent =
+        "No document";
+
+
+    document.getElementById(
+        "uploadStatus"
+    ).textContent =
+        "";
+
+
+    document.getElementById(
+        "pdfFile"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "chat"
+    ).innerHTML = `
+
+        <div class="welcome">
+
+            <div class="welcome-icon">
+                ✨
+            </div>
+
+            <h2>
+                Ask your document
+            </h2>
+
+            <p>
+                Upload a PDF and I'll find
+                the relevant information for you.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+</script>
+
+</body>
+
+</html>

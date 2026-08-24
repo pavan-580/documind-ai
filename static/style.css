@@ -1,0 +1,360 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: #f5f6f8;
+    color: #18181b;
+}
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* Sidebar */
+
+.sidebar {
+    width: 270px;
+    background: #111113;
+    color: white;
+    padding: 30px 22px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.logo span {
+    margin-right: 8px;
+}
+
+.description {
+    color: #a1a1aa;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.new-document {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #3f3f46;
+    border-radius: 10px;
+    background: #18181b;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.new-document:hover {
+    background: #27272a;
+}
+
+.sidebar-info {
+    margin-top: 35px;
+    color: #a1a1aa;
+    font-size: 13px;
+}
+
+.sidebar-info div {
+    padding: 12px 0;
+}
+
+.sidebar-info span {
+    margin-right: 8px;
+}
+
+
+/* Main */
+
+.main {
+    margin-left: 270px;
+    width: calc(100% - 270px);
+    max-width: 1100px;
+    padding: 40px;
+    margin-right: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.header h1 {
+    font-size: 30px;
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: #71717a;
+}
+
+.document-name {
+    background: white;
+    border: 1px solid #e4e4e7;
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: #52525b;
+    font-size: 13px;
+}
+
+
+/* Upload */
+
+.upload-card {
+    background: white;
+    border: 1px solid #e4e4e7;
+    border-radius: 16px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.upload-icon {
+    width: 60px;
+    height: 60px;
+    background: #f4f4f5;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 27px;
+}
+
+.upload-content h2 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.upload-content p {
+    color: #71717a;
+    font-size: 14px;
+    margin-bottom: 14px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.choose-file,
+.upload-content button {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.choose-file {
+    border: 1px solid #d4d4d8;
+    background: white;
+}
+
+.upload-content button {
+    border: none;
+    background: #18181b;
+    color: white;
+    margin-left: 6px;
+}
+
+.upload-content button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.upload-status {
+    margin: 12px 4px;
+    font-size: 13px;
+    color: #52525b;
+}
+
+
+/* Chat */
+
+.chat {
+    background: white;
+    border: 1px solid #e4e4e7;
+    border-radius: 16px;
+    min-height: 420px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding: 25px;
+    margin-top: 10px;
+}
+
+.welcome {
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    color: #71717a;
+}
+
+.welcome-icon {
+    font-size: 38px;
+    margin-bottom: 15px;
+}
+
+.welcome h2 {
+    color: #18181b;
+    margin-bottom: 8px;
+}
+
+
+/* Messages */
+
+.message {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.user-message .avatar {
+    order: 2;
+}
+
+.user-message .message-content {
+    background: #18181b;
+    color: white;
+}
+
+.message-content {
+    max-width: 75%;
+    padding: 13px 16px;
+    border-radius: 12px;
+    background: #f4f4f5;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    background: #e4e4e7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.avatar.ai {
+    background: #18181b;
+    color: white;
+}
+
+
+/* Sources */
+
+.sources {
+    border-top: 1px solid #e4e4e7;
+    margin-top: 15px;
+    padding-top: 10px;
+    font-size: 12px;
+    color: #71717a;
+}
+
+.sources span {
+    display: inline-block;
+    margin-left: 7px;
+    background: white;
+    border: 1px solid #d4d4d8;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+
+/* Question */
+
+.question-area {
+    display: flex;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.question-area input {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #d4d4d8;
+    border-radius: 12px;
+    outline: none;
+    font-size: 14px;
+}
+
+.question-area input:focus {
+    border-color: #71717a;
+}
+
+.question-area button {
+    padding: 0 25px;
+    border: none;
+    border-radius: 12px;
+    background: #18181b;
+    color: white;
+    cursor: pointer;
+}
+
+.question-area button:disabled {
+    opacity: 0.5;
+}
+
+.footer-text {
+    text-align: center;
+    color: #a1a1aa;
+    font-size: 11px;
+    margin-top: 12px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .upload-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .message-content {
+        max-width: 90%;
+    }
+
+}
