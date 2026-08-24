@@ -19,6 +19,7 @@ UPLOAD_FOLDER = "../documents"
 ALLOWED_EXTENSIONS = {"pdf"}
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024
 
 # Track whether a document has been loaded
 document_loaded = False
@@ -187,9 +188,12 @@ def ask():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
-
+    port = int(os.environ.get("PORT", 5000))
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=False
+    )
 
 
 # import os
