@@ -7,7 +7,7 @@ load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
 
 if not HF_TOKEN:
-    raise ValueError("HF_TOKEN not found in .env file")
+    raise ValueError("HF_TOKEN environment variable is not configured")
 
 client = InferenceClient(
     api_key=HF_TOKEN
